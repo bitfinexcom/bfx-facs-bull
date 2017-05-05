@@ -4,7 +4,6 @@ const EventEmitter = require('events')
 const fs = require('fs')
 const _ = require('lodash')
 const async = require('async')
-const lutils = require('./../utils')
 
 class Facility extends EventEmitter {
   
