@@ -38,6 +38,7 @@ class Facility extends EventEmitter {
       },
       next => {
         this.active = 1
+        next()
       },
       next => {
         this._start(next)
