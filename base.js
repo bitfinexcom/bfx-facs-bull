@@ -6,7 +6,7 @@ const _ = require('lodash')
 const async = require('async')
 
 class Facility extends EventEmitter {
-  
+
   constructor(caller, opts, ctx) {
     super()
 
@@ -69,7 +69,7 @@ class Facility extends EventEmitter {
       }
     ], cb)
   }
-  
+
   _stop(cb) { cb() }
   _stop9(cb) { cb() }
 }
