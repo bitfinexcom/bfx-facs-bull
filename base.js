@@ -6,8 +6,7 @@ const _ = require('lodash')
 const async = require('async')
 
 class Facility extends EventEmitter {
-
-  constructor(caller, opts, ctx) {
+  constructor (caller, opts, ctx) {
     super()
 
     this.name = 'facility'
@@ -16,7 +15,7 @@ class Facility extends EventEmitter {
     this.ctx = ctx
   }
 
-  init() {
+  init () {
     if (this._hasConf) {
       const conf = JSON.parse(
         fs.readFileSync(
@@ -27,11 +26,11 @@ class Facility extends EventEmitter {
     }
   }
 
-  set(k, v) {
+  set (k, v) {
     this[k] = v
   }
 
-  start(cb) {
+  start (cb) {
     async.series([
       next => {
         this._start0(next)
@@ -46,10 +45,10 @@ class Facility extends EventEmitter {
     ], cb)
   }
 
-  _start0(cb) { cb() }
-  _start(cb) { cb() }
+  _start0 (cb) { cb() }
+  _start (cb) { cb() }
 
-  stop(cb) {
+  stop (cb) {
     async.series([
       next => {
         this._stop(next)
@@ -70,8 +69,8 @@ class Facility extends EventEmitter {
     ], cb)
   }
 
-  _stop(cb) { cb() }
-  _stop9(cb) { cb() }
+  _stop (cb) { cb() }
+  _stop9 (cb) { cb() }
 }
 
 module.exports = Facility
