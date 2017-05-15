@@ -5,31 +5,30 @@ const async = require('async')
 const Bull = require('bull')
 const Facility = require('./base')
 
-function client(conf, label) {
+function client (conf, label) {
   console.log(conf, label)
   return Bull(conf.queue, conf.port, conf.host)
 }
 
 class BullFacility extends Facility {
-
-  constructor(caller, opts, ctx) {
+  constructor (caller, opts, ctx) {
     super(caller, opts, ctx)
-    
+
     this.name = 'bull'
     this._hasConf = true
 
     this.init()
   }
 
-  _start(cb) {
+  _start (cb) {
     async.series([
       next => { super._start(next) },
       next => {
         this.queue = client(_.extend(_.pick(
           this.conf,
           ['host', 'port', 'auth']
-        ), { 
-          queue: this.opts.queue 
+        ), {
+          queue: this.opts.queue
         }))
 
         this.queue.on('cleaned', (jobs, type) => {
@@ -37,7 +36,7 @@ class BullFacility extends Facility {
             console.log('cleaned %s %s jobs', jobs.length, type)
           }
         })
-        
+
         this._itvCount = setInterval(() => {
           this.queue.count().then(cnt => {
             if (cnt) console.log('bull count', cnt)
@@ -54,7 +53,7 @@ class BullFacility extends Facility {
     ], cb)
   }
 
-  _stop(cb) {
+  _stop (cb) {
     async.series([
       next => { super._stop(next) },
       next => {
@@ -62,8 +61,8 @@ class BullFacility extends Facility {
         this.queue.close().then(() => {})
         next()
       }
-    ], cb) 
+    ], cb)
   }
 }
 
-module.exports = BullFacility 
+module.exports = BullFacility
