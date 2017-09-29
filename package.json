@@ -11,8 +11,8 @@
     "bitfinex"
   ],
   "dependencies": {
-    "async": "~2.4.0",
-    "bull": "~2.2.6",
+    "async": "~2.5.0",
+    "bull": "~3.2.0",
     "lodash": "~4.17.4"
   },
   "engine": {
