@@ -7,7 +7,12 @@ const Facility = require('./base')
 
 function client (conf, label) {
   console.log(conf, label)
-  return Bull(conf.queue, conf.port, conf.host)
+  return Bull(conf.queue, {
+    redis: {
+      port: conf.port,
+      host: conf.host
+    }
+  })
 }
 
 class BullFacility extends Facility {
