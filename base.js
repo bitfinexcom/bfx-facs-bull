@@ -17,9 +17,11 @@ class Facility extends EventEmitter {
 
   init () {
     if (this._hasConf) {
+      const cal = this.caller
+
       const conf = JSON.parse(
         fs.readFileSync(
-          `${this.opts.dirConf}/${this.name}.config.json`, 'utf8'
+          `${cal.ctx.root}/config/facs/${this.name}.config.json`, 'utf8'
         )
       )
       this.conf = conf[this.opts.ns]
