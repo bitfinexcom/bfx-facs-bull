@@ -7,38 +7,24 @@
     "name": "prdn",
     "email": "paolo@bitfinex.com"
   },
+  "main": "index.js",
   "keywords": [
     "bitfinex"
   ],
   "dependencies": {
     "async": "~2.5.0",
+    "bfx-facs-base": "git+https://github.com/bitfinexcom/bfx-facs-base.git",
     "bull": "~3.2.0",
     "lodash": "~4.17.4"
   },
   "engine": {
-    "node": ">=6.0"
-  },
-  "main": "index.js",
-  "directories": {
-    "example": "examples",
-    "test": "test"
-  },
-  "devDependencies": {
-    "chai": "~3.2.0",
-    "mocha": "~2.2.5"
-  },
-  "scripts": {
-    "test": "make test"
+    "node": ">=8.0"
   },
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/bitfinexcom/bfx-facs-bull.git"
   },
-  "bugs": {
-    "url": "https://github.com/bitfinexcom/bfx-facs-bull/issues"
-  },
-  "homepage": "https://github.com/bitfinexcom/bfx-facs-bull",
   "maintainers": [
     {
       "name": "prdn",

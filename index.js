@@ -3,7 +3,7 @@
 const _ = require('lodash')
 const async = require('async')
 const Bull = require('bull')
-const Facility = require('./base')
+const Base = require('bfx-facs-base')
 
 function client (conf, label) {
   console.log(conf, label)
@@ -15,7 +15,7 @@ function client (conf, label) {
   })
 }
 
-class BullFacility extends Facility {
+class BullFacility extends Base {
   constructor (caller, opts, ctx) {
     super(caller, opts, ctx)
 
