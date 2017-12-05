@@ -18,7 +18,7 @@
     "node": ">=6.0"
   },
   "main": "base.js",
-  "license": "MIT",
+  "license": "Apache-2.0",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/bitfinexcom/bfx-facs-base.git"
