@@ -6,7 +6,6 @@ const Bull = require('bull')
 const Base = require('bfx-facs-base')
 
 function client (conf, label) {
-  console.log(conf, label)
   return Bull(conf.queue, {
     redis: {
       port: conf.port,
