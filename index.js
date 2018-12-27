@@ -7,10 +7,7 @@ const Base = require('bfx-facs-base')
 
 function client (conf, label) {
   return Bull(conf.queue, {
-    redis: {
-      port: conf.port,
-      host: conf.host
-    }
+    redis: conf
   })
 }
 
@@ -30,7 +27,7 @@ class BullFacility extends Base {
       next => {
         this.queue = client(_.extend(_.pick(
           this.conf,
-          ['host', 'port', 'auth']
+          ['host', 'port', 'password', 'sentinels', 'name']
         ), {
           queue: this.opts.queue
         }))
