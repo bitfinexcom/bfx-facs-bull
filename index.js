@@ -61,6 +61,7 @@ class BullFacility extends Base {
       next => { super._stop(next) },
       next => {
         clearInterval(this._itv)
+        clearInterval(this._itvCount)
         this.queue.close().then(() => {})
         next()
       }
