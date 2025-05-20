@@ -1,15 +1,9 @@
 'use strict'
 
-const _ = require('lodash')
 const async = require('async')
 const Bull = require('bull')
 const Base = require('bfx-facs-base')
-
-function client (conf, label) {
-  return Bull(conf.queue, {
-    redis: conf
-  })
-}
+const { pick } = require('@bitfinex/lib-js-util-base')
 
 class BullFacility extends Base {
   constructor (caller, opts, ctx) {
@@ -25,12 +19,7 @@ class BullFacility extends Base {
     async.series([
       next => { super._start(next) },
       next => {
-        this.queue = client(_.extend(_.pick(
-          this.conf,
-          ['host', 'port', 'password', 'sentinels', 'name']
-        ), {
-          queue: this.opts.queue
-        }))
+        this._startQueue()
 
         if (this.opts.control) {
           this.queue.on('cleaned', (jobs, type) => {
@@ -66,6 +55,15 @@ class BullFacility extends Base {
         next()
       }
     ], cb)
+  }
+
+  _startQueue () {
+    const redis = pick(this.conf, ['host', 'port', 'password', 'sentinels', 'name'])
+    const queueOpts = this.opts.queueOpts ?? {}
+    this.queue = Bull(this.opts.queue, {
+      redis,
+      ...queueOpts
+    })
   }
 }
 
