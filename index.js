@@ -3,7 +3,7 @@
 const async = require('async')
 const Bull = require('bull')
 const Base = require('bfx-facs-base')
-const { pick } = require('@bitfinex/lib-js-util-base')
+const { pick, isObject, isNumber } = require('@bitfinex/lib-js-util-base')
 
 class BullFacility extends Base {
   constructor (caller, opts, ctx) {
@@ -59,11 +59,23 @@ class BullFacility extends Base {
 
   _startQueue () {
     const redis = pick(this.conf, ['host', 'port', 'password', 'sentinels', 'name'])
-    const queueOpts = this.opts.queueOpts ?? {}
     this.queue = Bull(this.opts.queue, {
       redis,
-      ...queueOpts
+      ...this._parseLimiter()
     })
+  }
+
+  _parseLimiter () {
+    if (!this.opts.queueOpts || !isObject(this.opts.queueOpts)) return {}
+    if (!this.opts.queueOpts.limiter || !isObject(this.opts.queueOpts.limiter)) return {}
+    if (!isNumber(this.opts.queueOpts.limiter.max) || !this.opts.queueOpts.limiter.max) return {}
+    if (!isNumber(this.opts.queueOpts.limiter.duration) || !this.opts.queueOpts.limiter.duration) return {}
+    return {
+      limiter: {
+        max: this.opts.queueOpts.limiter.max,
+        duration: this.opts.queueOpts.limiter.duration
+      }
+    }
   }
 }
 
