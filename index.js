@@ -1,15 +1,9 @@
 'use strict'
 
-const _ = require('lodash')
 const async = require('async')
 const Bull = require('bull')
 const Base = require('bfx-facs-base')
-
-function client (conf, label) {
-  return Bull(conf.queue, {
-    redis: conf
-  })
-}
+const { pick, isNumber, isPlainObject } = require('@bitfinex/lib-js-util-base')
 
 class BullFacility extends Base {
   constructor (caller, opts, ctx) {
@@ -25,12 +19,7 @@ class BullFacility extends Base {
     async.series([
       next => { super._start(next) },
       next => {
-        this.queue = client(_.extend(_.pick(
-          this.conf,
-          ['host', 'port', 'password', 'sentinels', 'name']
-        ), {
-          queue: this.opts.queue
-        }))
+        this._startQueue()
 
         if (this.opts.control) {
           this.queue.on('cleaned', (jobs, type) => {
@@ -66,6 +55,27 @@ class BullFacility extends Base {
         next()
       }
     ], cb)
+  }
+
+  _startQueue () {
+    const redis = pick(this.conf, ['host', 'port', 'password', 'sentinels', 'name'])
+    this.queue = Bull(this.opts.queue, {
+      redis,
+      ...this._parseLimiter()
+    })
+  }
+
+  _parseLimiter () {
+    if (!this.opts.queueOpts || !isPlainObject(this.opts.queueOpts)) return {}
+    if (!this.opts.queueOpts.limiter || !isPlainObject(this.opts.queueOpts.limiter)) return {}
+    if (!isNumber(this.opts.queueOpts.limiter.max) || !this.opts.queueOpts.limiter.max) return {}
+    if (!isNumber(this.opts.queueOpts.limiter.duration) || !this.opts.queueOpts.limiter.duration) return {}
+    return {
+      limiter: {
+        max: this.opts.queueOpts.limiter.max,
+        duration: this.opts.queueOpts.limiter.duration
+      }
+    }
   }
 }
 
