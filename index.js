@@ -23,9 +23,7 @@ class BullFacility extends Base {
 
         if (this.opts.control) {
           this.queue.on('cleaned', (jobs, type) => {
-            if (this.opts.debug) {
-              console.log('cleaned %s %s jobs', jobs.length, type)
-            }
+            this._logMsg('cleaned %s %s jobs', jobs.length, type)
           })
 
           this._itvCount = setInterval(() => {
@@ -63,6 +61,7 @@ class BullFacility extends Base {
       redis,
       ...this._parseLimiter()
     })
+    this._addReconnectHandler(this.queue)
   }
 
   _parseLimiter () {
@@ -75,6 +74,28 @@ class BullFacility extends Base {
         max: this.opts.queueOpts.limiter.max,
         duration: this.opts.queueOpts.limiter.duration
       }
+    }
+  }
+
+  _addReconnectHandler (queue) {
+    let reconnectingEvent = false
+    queue.client.on('reconnecting', error => {
+      this._logMsg(error, 'redis client reconnecting')
+      reconnectingEvent = true
+    })
+    queue.client.on('ready', () => {
+      this._logMsg('client ready')
+      if (reconnectingEvent) {
+        this._logMsg('rerun queue')
+        reconnectingEvent = false
+        queue.run(queue.concurrency)
+      }
+    })
+  }
+
+  _logMsg (...args) {
+    if (this.opts.debug) {
+      console.log(...args)
     }
   }
 }
