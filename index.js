@@ -19,6 +19,11 @@ class BullFacility extends Base {
     async.series([
       next => { super._start(next) },
       next => {
+        // Skip queue init on lazy start
+        if (this.opts.lazyStart) {
+          return next()
+        }
+
         this._startQueue()
 
         if (this.opts.control) {
@@ -51,7 +56,10 @@ class BullFacility extends Base {
       next => {
         clearInterval(this._itv)
         clearInterval(this._itvCount)
-        this.queue.close().then(() => {})
+        if (this.queue) {
+          this.queue.close().then(() => { })
+        }
+
         next()
       }
     ], cb)
@@ -74,6 +82,31 @@ class BullFacility extends Base {
       limiter: {
         max: this.opts.queueOpts.limiter.max,
         duration: this.opts.queueOpts.limiter.duration
+      }
+    }
+  }
+
+  /**
+   * Push a job to the queue
+   * By default will close the queue after adding the job
+   *
+   * @param {Object} data - job data
+   * @param {Object} opts - job options
+   * @param {boolean} closeQueue - close the queue after adding the job
+   * @returns {Promise<Object>}
+   */
+  async pushJob (data, opts = {}, closeQueue = true) {
+    if (!this.queue) {
+      this._startQueue()
+    }
+
+    try {
+      const job = await this.queue?.add(data, opts)
+      return job
+    } finally {
+      if (this.queue && closeQueue) {
+        await this.queue.close()
+        this.queue = null
       }
     }
   }
