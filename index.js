@@ -35,14 +35,17 @@ class BullFacility extends Base {
   _stop (cb) {
     async.series([
       next => { super._stop(next) },
-      async next => {
+      async () => {
         clearInterval(this._itv)
         clearInterval(this._itvCount)
-        if (this.queue) {
-          await this.queue.close()
-        }
 
-        next()
+        if (this.queue) {
+          try {
+            await this.queue.close()
+          } catch (err) {
+            console.error('error closing queue', err)
+          }
+        }
       }
     ], cb)
   }
