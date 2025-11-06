@@ -25,25 +25,7 @@ class BullFacility extends Base {
         }
 
         this._startQueue()
-
-        if (this.opts.control) {
-          this.queue.on('cleaned', (jobs, type) => {
-            if (this.opts.debug) {
-              console.log('cleaned %s %s jobs', jobs.length, type)
-            }
-          })
-
-          this._itvCount = setInterval(() => {
-            this.queue.count().then(cnt => {
-              if (cnt) console.log('bull count', cnt)
-            })
-          }, 30000)
-
-          this._itv = setInterval(() => {
-            this.queue.clean(10000, 'completed', 50000)
-            this.queue.clean(10000, 'failed', 50000)
-          }, 60000)
-        }
+        this._setupControlTimers()
 
         next()
       }
@@ -53,11 +35,11 @@ class BullFacility extends Base {
   _stop (cb) {
     async.series([
       next => { super._stop(next) },
-      next => {
+      async next => {
         clearInterval(this._itv)
         clearInterval(this._itvCount)
         if (this.queue) {
-          this.queue.close().then(() => { })
+          await this.queue.close()
         }
 
         next()
@@ -86,6 +68,40 @@ class BullFacility extends Base {
     }
   }
 
+  _setupControlTimers () {
+    if (!this.opts.control || !this.queue) {
+      return
+    }
+
+    this.queue.on('cleaned', (jobs, type) => {
+      if (this.opts.debug) {
+        console.log('cleaned %s %s jobs', jobs.length, type)
+      }
+    })
+
+    this._itvCount = setInterval(() => {
+      this.queue.count().then(cnt => {
+        if (cnt) console.log('bull count', cnt)
+      })
+    }, 30000)
+
+    this._itv = setInterval(() => {
+      this.queue.clean(10000, 'completed', 50000)
+      this.queue.clean(10000, 'failed', 50000)
+    }, 60000)
+  }
+
+  startQueue () {
+    if (this.queue) {
+      return this.queue
+    }
+
+    this._startQueue()
+    this._setupControlTimers()
+
+    return this.queue
+  }
+
   /**
    * Push a job to the queue
    * By default will close the queue after adding the job
@@ -96,9 +112,7 @@ class BullFacility extends Base {
    * @returns {Promise<Object>}
    */
   async pushJob (data, opts = {}, closeQueue = true) {
-    if (!this.queue) {
-      this._startQueue()
-    }
+    this.startQueue()
 
     try {
       const job = await this.queue?.add(data, opts)
