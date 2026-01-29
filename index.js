@@ -2,7 +2,7 @@
 
 const async = require('async')
 const Bull = require('bull')
-const Base = require('bfx-facs-base')
+const Base = require('@bitfinex/bfx-facs-base')
 const { pick, isNumber, isPlainObject } = require('@bitfinex/lib-js-util-base')
 
 class BullFacility extends Base {

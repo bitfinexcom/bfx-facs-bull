@@ -1,5 +1,5 @@
 {
-  "name": "bfx-facs-bull",
+  "name": "@bitfinex/bfx-facs-bull",
   "version": "0.0.1",
   "private": false,
   "description": "Bitfinex Bull Facility",
@@ -12,9 +12,9 @@
     "bitfinex"
   ],
   "dependencies": {
+    "@bitfinex/bfx-facs-base": "git+https://github.com/bitfinexcom/bfx-facs-base.git",
     "@bitfinex/lib-js-util-base": "git+https://github.com/bitfinexcom/lib-js-util-base.git",
     "async": "3.2.6",
-    "bfx-facs-base": "git+https://github.com/bitfinexcom/bfx-facs-base.git",
     "bull": "3.29.3"
   },
   "engines": {
