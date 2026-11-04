@@ -16,9 +16,14 @@
     "@bitfinex/lib-js-util-base": "git+https://github.com/bitfinexcom/lib-js-util-base.git",
     "async": "3.2.6",
     "bull": "3.29.3"
+   },
+   "overrides": {
+       "bull": {
+          "uuid": "11.1.1"
+        }
   },
   "engines": {
-    "node": ">=16.0"
+    "node": ">=22.0"
   },
   "license": "Apache-2.0",
   "repository": {
@@ -32,11 +37,10 @@
     }
   ],
   "devDependencies": {
-    "husky": "8.0.3",
-    "standard": "17.1.2"
+    "@bitfinex/lint-js": "1.1.0"
   },
   "scripts": {
-    "lint": "standard",
-    "lint:fix": "standard --fix"
+    "lint": "bfx-lint-js . --mocha",
+    "lint:fix": "bfx-lint-js . --mocha --fix"
   }
 }
