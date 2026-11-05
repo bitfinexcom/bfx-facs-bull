@@ -40,7 +40,7 @@
     "@bitfinex/lint-js": "1.1.0"
   },
   "scripts": {
-    "lint": "bfx-lint-js . --mocha",
-    "lint:fix": "bfx-lint-js . --mocha --fix"
+    "lint": "bfx-lint-js",
+    "lint:fix": "bfx-lint-js --fix"
   }
 }
